@@ -6,32 +6,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type album struct {
+type Book struct {
 	ID     string  `json:"id"`
 	Title  string  `json:"title"`
-	Artist string  `json:"artist"`
+	Author string  `json:"author"`
 	Price  float64 `json:"price"`
 }
 
-var albums []album
+var books []Book
 
 func main() {
 	router := gin.Default()
-	router.GET("/albums", getAlbums)
-	router.POST("/albums", postAlbums)
+	router.GET("/books", getBooks)
+	router.POST("/books", postBooks)
 	router.Run("localhost:8080")
 }
 
-func getAlbums(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, albums)
+func getBooks(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, books)
 }
 
-func postAlbums(c *gin.Context) {
-	var newAlbum album
+func postBooks(c *gin.Context) {
+	var newAlbum Book
 	err := c.BindJSON(&newAlbum)
 	if err != nil {
 		return
 	}
-	albums = append(albums, newAlbum)
+	books = append(books, newAlbum)
 	c.Status(http.StatusCreated)
 }
