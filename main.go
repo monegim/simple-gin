@@ -20,6 +20,7 @@ func main() {
 	router.GET("/books", getBooks)
 	router.POST("/books", postBooks)
 	router.GET("/books/:id", getBook)
+	router.DELETE("/books/:id", deleteBook)
 	router.Run("localhost:8080")
 }
 
@@ -45,4 +46,15 @@ func getBook(c *gin.Context)  {
 		}
 	}
 	c.Status(http.StatusNotFound)
+}
+
+func deleteBook(c *gin.Context)  {
+	id := c.Param("id")
+	for i, b := range books {
+		if id == b.ID {
+			books = append(books[:i],books[i+1:]...)
+			break
+		}
+	}
+	c.Status(http.StatusNoContent)
 }
