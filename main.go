@@ -19,6 +19,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/books", getBooks)
 	router.POST("/books", postBooks)
+	router.GET("/books/:id", getBook)
 	router.Run("localhost:8080")
 }
 
@@ -34,4 +35,14 @@ func postBooks(c *gin.Context) {
 	}
 	books = append(books, newAlbum)
 	c.Status(http.StatusCreated)
+}
+
+func getBook(c *gin.Context)  {
+	id := c.Param("id")
+	for _, b := range books {
+		if id == b.ID {
+			c.IndentedJSON(http.StatusOK, b)
+		}
+	}
+	c.Status(http.StatusNotFound)
 }
