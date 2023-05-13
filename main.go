@@ -33,12 +33,18 @@ func getBooks(c *gin.Context) {
 }
 
 func postBooks(c *gin.Context) {
-	var newAlbum Book
-	err := c.BindJSON(&newAlbum)
+	var book Book
+	err := c.BindJSON(&book)
 	if err != nil {
 		return
 	}
-	books = append(books, newAlbum)
+	for _, b := range(books) {
+		if book.ID == b.ID {
+			c.Status(http.StatusBadRequest)
+			return
+		}
+	}
+	books = append(books, book)
 	c.Status(http.StatusCreated)
 }
 
@@ -91,11 +97,11 @@ func updateBook(c *gin.Context) {
 		})
 	}
 	nb := reflect.ValueOf(newBook)
-	typeOfS := nb.Type()
+	typeOfnb := nb.Type()
 	for _, b := range books {
 		if b.ID == id {
 			for i := 0; i < nb.NumField(); i++ {
-				fmt.Printf("Field: %s\tValue: %v\n", typeOfS.Field(i).Name, nb.Field(i).Interface())
+				fmt.Printf("Field: %v\tValue: %v\n", typeOfnb.Field(i), nb.Field(i).Interface())
 			}
 		}
 	}
