@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
-	"reflect"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +21,7 @@ func main() {
 	router.GET("/books", getBooks)
 	router.POST("/books", postBooks)
 	router.GET("/books/:id", getBook)
-	router.PATCH("/books/:id", updateBook)
+	router.PUT("/books/:id", updateBook)
 	router.DELETE("/books/:id", deleteBook)
 	router.Run("localhost:8080")
 }
@@ -38,7 +36,7 @@ func postBooks(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	for _, b := range(books) {
+	for _, b := range books {
 		if book.ID == b.ID {
 			c.Status(http.StatusBadRequest)
 			return
@@ -90,19 +88,27 @@ func updateBook(c *gin.Context) {
 			"error": err.Error(),
 		})
 	}
-	var newBook Book
-	if err := c.BindJSON(&newBook); err != nil {
+	var updatedBook Book
+	if err := c.BindJSON(&updatedBook); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 	}
-	nb := reflect.ValueOf(newBook)
-	typeOfnb := nb.Type()
-	for _, b := range books {
+	for idx, b := range books {
 		if b.ID == id {
-			for i := 0; i < nb.NumField(); i++ {
-				fmt.Printf("Field: %v\tValue: %v\n", typeOfnb.Field(i), nb.Field(i).Interface())
-			}
+			books[idx] = updatedBook
+			c.Status(http.StatusAccepted)
+			return
 		}
 	}
+	c.Status(http.StatusNotFound)
+	// nb := reflect.ValueOf(updatedBook)
+	// typeOfnb := nb.Type()
+	// for _, b := range books {
+	// 	if b.ID == id {
+	// 		for i := 0; i < nb.NumField(); i++ {
+	// 			fmt.Printf("Field: %v\tValue: %v\n", typeOfnb.Field(i), nb.Field(i).Interface())
+	// 		}
+	// 	}
+	// }
 }
