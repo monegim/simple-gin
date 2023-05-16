@@ -15,6 +15,7 @@ type Book struct {
 }
 
 var books []Book
+var lastID int
 
 func main() {
 	router := gin.Default()
@@ -36,12 +37,14 @@ func postBooks(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	for _, b := range books {
-		if book.ID == b.ID {
-			c.Status(http.StatusBadRequest)
-			return
-		}
-	}
+	// for _, b := range books {
+	// 	if book.ID == b.ID {
+	// 		c.Status(http.StatusBadRequest)
+	// 		return
+	// 	}
+	// }
+	book.ID = lastID + 1
+	lastID += 1
 	books = append(books, book)
 	c.Status(http.StatusCreated)
 }
@@ -96,6 +99,7 @@ func updateBook(c *gin.Context) {
 	}
 	for idx, b := range books {
 		if b.ID == id {
+			updatedBook.ID = id
 			books[idx] = updatedBook
 			c.Status(http.StatusAccepted)
 			return
